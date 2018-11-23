@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% block title %}Results{% endblock %}
+
+{% block message %}
+    <hr />
+    <h4 class="text-center">MESSAGE</h4>
+    <p class="text-center"><i>{{query}}</i></p>
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Result</h1>
+    <p class='text-center' style='font-style: italic'> Labels are maximized to avoid false negatives. Too much help is better than not enough. </p>
+    <div class="text-center" style='padding:10px'><button id = 'showAll' type="button" class="btn btn-info">Show/Hide All </button> </div>
+        <ul class="list-group">
+            {% for category, classification in classification_result.items() %}
+                {% if classification == 1 %}
+                    <li class="list-group-item list-group-item-success text-center active predicted">
+                    {{category.replace('_', ' ').title()}}</li>
+                {% else %}
+                    <li class="list-group-item list-group-item-dark text-center not-predicted" style="display: none">{{category.replace('_', ' ').title()}}</li>
+                {% endif %}
+            {% endfor %}    
+
+        </div>
+    </div>
+
+    <script type='text/javascript'> 
+        // adds toggle functionality to Show/Hide all button.
+        // adjusted from answer found here: https://stackoverflow.com/questions/4528085/toggle-show-hide-div-with-button/36255513#36255513
+
+        var notPredicted = document.querySelectorAll('.not-predicted');
+        var showButton = document.querySelector('#showAll');
+
+
+        showButton.addEventListener("click", function() {
+            notPredicted.forEach(function(el){
+                el.style.display = (el.dataset.toggled ^= 1) ? 'block' : 'none';
+            })
+        });
+    </script>
+
+
+{% endblock %}
+

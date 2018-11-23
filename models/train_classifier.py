@@ -2,12 +2,14 @@ import sys
 from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
+import pickle
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import classification_report, hamming_loss
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -22,22 +24,46 @@ def load_data(database_filepath):
     engine = create_engine('sqlite:///' + str(database_filepath))
     df = pd.read_sql_table('MessageTable',con=engine)
 
+    X = df['message']
+    Y = df.iloc[:,3:]
+    cats = Y.columns
+
+    return X, Y, cats
+
 
 def tokenize(text):
-    pass
+    #split into tokens
+    tokens = nltk.word_tokenize(text)
+    
+    #get to the ROOT of the words (lemmatize)
+    lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
+    
+    clean_tokens = []
+    for token in tokens:
+        clean_token = lemmatizer.lemmatize(token, pos='v').lower()
+        clean_tokens.append(clean_token)
+    
+    return clean_tokens
 
 
 def build_model():
-    pass
+    pipeline = Pipeline(
+    [('vectorizer',CountVectorizer(tokenizer=tokenize)),
+     ('tfidf',TfidfTransformer()),
+     ('clf',KNeighborsClassifier(leaf_size=5, n_neighbors = 5))]
+    )
 
+    return pipeline
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    Y_pred = model.predict(X_test)
+
+    print(classification_report(Y_test, Y_pred, target_names=category_names))
 
 
 def save_model(model, model_filepath):
-    pass
-
+    
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 def main():
     if len(sys.argv) == 3:

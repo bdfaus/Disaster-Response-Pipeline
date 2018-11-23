@@ -36,6 +36,13 @@ def clean_data(df):
 	#drop duplicates
 	df = pd.DataFrame(df[df.duplicated()==False])
 
+	#'original' column will not be used. Delete to clean up data.
+	df.drop('original', axis=1, inplace=True)
+
+	#eliminate non-binary columns from 'related'
+	non_binary_related = df[df['related']==2.].index
+	df.drop(non_binary_related, inplace=True)
+
 	return df
 
 

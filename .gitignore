@@ -1,1 +1,9 @@
 /.ipynb_checkpoints/*
+
+*.pkl
+
+*.sav
+
+*.db
+
+*.ipynb
