@@ -99,7 +99,7 @@ def index():
                         y=label_counts[35],
                         xref='x',
                         yref='y',
-                        text='Model will fitted poorly to predict this label',
+                        text='Model likely fitted poorly to predict this label',
                         showarrow=True,
                         arrowhead=7,
                         ax=0,
