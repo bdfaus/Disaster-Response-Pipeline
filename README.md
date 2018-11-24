@@ -31,7 +31,13 @@ The message data in the .csv files provided is not balanced. There are very few 
 - app directory contains the Flask app which utilizes the developed pipeline and cleaned data for visualizations and predictions of new messages
 
 ## At a Glance
+![Home Page 1](screenshots/ss1.png)
 
+![Home Page 2](screenshots/ss2.png)
+
+![Message Predict 1](screenshots/ss3.png)
+
+![Message Predict 2](screenshots/ss4.png)
 
 ## Author
 - Original data was provided by Figure Eight. 
