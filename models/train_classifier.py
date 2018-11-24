@@ -6,7 +6,7 @@ import pickle
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import TruncatedSVD
-from sklearn.metrics import classification_report, hamming_loss
+from sklearn.metrics import classification_report, hamming_loss, recall_score, make_scorer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -50,16 +50,37 @@ def build_model():
     pipeline = Pipeline(
     [('vectorizer',CountVectorizer(tokenizer=tokenize)),
      ('tfidf',TfidfTransformer()),
-     ('clf',KNeighborsClassifier(leaf_size=5, n_neighbors = 5))]
+     ('clf',KNeighborsClassifier())]
     )
 
     return pipeline
 
+def find_params(model, X_train, Y_train):
+	'''
+	Finds best params for model via GridSearchCV, using custom scorer to maximize recall.
+
+	input: pipeline, X_train, Y_train
+	output: optimized model
+	'''
+	#Find best params
+	custom_recall = make_scorer(recall_score,average='weighted')
+	parameters = {'clf__n_neighbors':[3,5,7], 'clf__leaf_size':[5,10,15]}
+	cv = GridSearchCV(model, param_grid = parameters, scoring=custom_recall)
+	cv.fit(X_train,Y_train)
+
+	#Set model params to best params & fit model
+	best_params = cv.best_params_
+	model.set_params(clf__leaf_size=best_params['clf__leaf_size'], clf__n_neighbors=best_params['clf__n_neighbors'])
+	model.fit(X_train,Y_train)
+
+	return model
+
 def evaluate_model(model, X_test, Y_test, category_names):
-    Y_pred = model.predict(X_test)
+	#set model scorer
 
-    print(classification_report(Y_test, Y_pred, target_names=category_names))
+	Y_pred = model.predict(X_test)
 
+	print(classification_report(Y_test, Y_pred, target_names=category_names))
 
 def save_model(model, model_filepath):
     
@@ -75,8 +96,8 @@ def main():
         print('Building model...')
         model = build_model()
         
-        print('Training model...')
-        model.fit(X_train, Y_train)
+        print('Training and Optimizing model...')
+        model = find_params(model, X_train, Y_train)
         
         print('Evaluating model...')
         evaluate_model(model, X_test, Y_test, category_names)

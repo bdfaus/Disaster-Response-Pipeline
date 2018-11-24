@@ -30,7 +30,7 @@ engine = create_engine('sqlite:///../data/final.db')
 df = pd.read_sql_table('MessageTable', engine)
 
 # load model
-model = joblib.load("../models/final_model.pkl")
+model = joblib.load("../models/real_final_model.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model

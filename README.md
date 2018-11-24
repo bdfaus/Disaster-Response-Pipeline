@@ -3,6 +3,8 @@
 ## About
 This project is an ETL and Machine Learning pipeline on text message data in a disaster scenario. The goal is to correctly classify messages in the event of a disaster in order to reach distressed persons in the population of the disaster. Data provided by Figure Eight.
 
+The message data in the .csv files provided is not balanced. There are very few of some categories. In order to mitigate problems this might create, the model is built to maximize recall (or minimize false negatives). The thought process behind minimizing false negatives is that too much help is better than not enough. 
+
 ## Use 
 1. Run process_data.py with the following command line arguments (in this order):
   - messages csv file, categories csv file, and filepath of the database in which to save the cleaned data
@@ -27,6 +29,9 @@ This project is an ETL and Machine Learning pipeline on text message data in a d
   - train_classifier.py trains the Machine Learning model on database created in process_data.py and saves model for prediction in flask app
   - Machine Learning models should be saved here
 - app directory contains the Flask app which utilizes the developed pipeline and cleaned data for visualizations and predictions of new messages
+
+## At a Glance
+
 
 ## Author
 - Original data was provided by Figure Eight. 
